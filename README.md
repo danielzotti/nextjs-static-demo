@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# NextJS Static Demo
 
-## Getting Started
+It's a [Next.js](https://nextjs.org/) project (v14.1.0) bootstrapped
+with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-First, run the development server:
+## How to do it on your own
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 1. Create a NextJs project
+
+Just type `npx create-next-app@latest` and answer a few questions.
+
+> More info at [Create a NextJs project](https://nextjs.org/docs/getting-started/installation)
+
+#### IMPORTANT
+
+I had to rename `next.config.mjs`  to `next.config.js` and change the file this way:
+
+```javascript
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+        output: 'export', // --> ADD
+    };
+// export default nextConfig; --> REMOVE
+module.exports = nextConfig // --> ADD
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+I don't know why, but it seems JS modules are not supported by the Next.js GitHub Action (see next chapter)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Activate GitHub Pages (deploy through GitHub Actions)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Go To `Settings` page, select `Pages` on the menu on the left, go to section `Build and deployment` -> `Source`,
+click `GitHub Actions` dropdown and select the action `Next.js by GitHub Actions`.
+Click on `Configure` to open the `.github/workflows/nextjs.yml` file editor.
 
-## Learn More
+![github-action-source.png](assets%2Fgithub-action-source.png)
 
-To learn more about Next.js, take a look at the following resources:
+#### IMPORTANT
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Since I used `NextJs 14.1.0`, I had to remove the following lines of code (row 78 and 79) from
+the `.github/workflows/nextjs.yml`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```yaml
+      - name: Static HTML export with Next.js
+        run: ${{ steps.detect-package-manager.outputs.runner }} next export
+```
 
-## Deploy on Vercel
+![github-action-code.png](assets%2Fgithub-action-code.png)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Remember to commit** the file!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### 3. Test it
+
+Do some changes on your codebase and push it to `master` branch. Wait for the action to end its workflow and go
+to `https://{your-github-name}.github.io/{your-project-name}` (in my
+case https://danielzotti.github.io/nextjs-static-demo/) 
